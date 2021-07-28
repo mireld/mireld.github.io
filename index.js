@@ -9,11 +9,21 @@ let pendientes = [];
 const CrearPendiente = (pendiente) => {
     let item = {
         pendiente: pendiente,
-        estado: false
+        estado: 'Por Hacer'
     }
     pendientes.push(item);
     return item;
 }
+
+const template = (e) => 
+`<div class="alert alert-primary" role="alert">
+<span class="material-icons float-start">
+    fact_check
+</span>
+<b class="m-2">${e.pendiente}</b> - ${e.estado}
+<i class="material-icons float-end ms-2">delete</i>
+<i class="material-icons float-end ms-2">done</i>
+</div>`
 
 const SaveLocal = () => {
     localStorage.setItem('Pendiente', JSON.stringify(pendientes));
@@ -23,9 +33,15 @@ const printHTML = () => {
     pendientesUI.innerHTML = '';
     pendientes = JSON.parse(localStorage.getItem('Pendiente'));
     console.log(pendientes);
+    if (pendientes === null) {
+        pendientes = [];
+    } else {
+        pendientes.forEach(element => {
+            pendientesUI.innerHTML += template(element);
+        });
+    }
 
 }
-
 
 // Button script
 formularioUI.addEventListener('submit', (e) => {
@@ -34,8 +50,8 @@ formularioUI.addEventListener('submit', (e) => {
         console.log(toDoUI.value);
         CrearPendiente(toDoUI.value);
         SaveLocal();
-        // console.log(pendientes);
         toDoUI.value = '';
+        printHTML();
     }
         
 } )
