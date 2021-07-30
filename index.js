@@ -2,38 +2,46 @@ console.log('Funcionando');
 
 const formularioUI = document.querySelector('#formulario');
 const toDoUI = document.querySelector('#pendiente');
+const toDoDesc = document.querySelector('#descripcion');
 const pendientesUI = document.querySelector('#listaActividades');
 let pendientes = [];
 
 
-const CrearPendiente = (pendiente) => {
+const CrearPendiente = (pendiente, descripcion) => {
     let item = {
         pendiente: pendiente,
-        estado: 'Por Hacer'
+        estado: 'Por Hacer',
+        descripcion: descripcion
     }
     pendientes.push(item);
     return item;
 }
 
-const template = (e) => 
-`<div class="alert alert-warning flex-wrap" role="alert">
-<span class="material-icons float-start">
-    fact_check
-</span>
-<b class="m-2 w-50">${e.pendiente}</b>
-<span class="w-25 fst-italic"> - ${e.estado}</span>
-<span class="material-icons float-end ms-1">delete</span>
-<span class="material-icons float-end ms-1">done</span>
-<article class="w-75">Descripcion del pendiente, que debera de incluir una explicacion mas detallada de la actividad</article> 
-</div>`
-// `<div class="alert alert-primary" role="alert">
-// <span class="material-icons float-start">
-//     fact_check
-// </span>
-// <b class="m-2">${e.pendiente}</b> - ${e.estado}
-// <i class="material-icons float-end ms-2">delete</i>
-// <i class="material-icons float-end ms-2">done</i>
-// </div>`
+const template = (e) => {
+    if (e.estado === 'Por Hacer') {
+        return `<div class="alert alert-warning flex-wrap" role="alert">
+        <span class="material-icons float-start">
+            fact_check
+        </span>
+        <span class="material-icons float-end ms-1">delete</span>
+        <span class="material-icons float-end ms-1">done</span>
+        <b class="m-2 w-50">${e.pendiente}</b>
+        <span class="w-25 fst-italic"> - ${e.estado}</span>
+        <article class="w-75">- ${e.descripcion}</article> 
+        </div>`
+    } else if (e.estado === 'Realizado'){
+        return `<div class="alert alert-success flex-wrap" role="alert">
+        <span class="material-icons float-start">
+            fact_check
+        </span>
+        <span class="material-icons float-end ms-1">delete</span>
+        <span class="material-icons float-end ms-1">done</span>
+        <b class="m-2 w-50">${e.pendiente}</b>
+        <span class="w-25 fst-italic"> - ${e.estado}</span>
+        <article class="w-75">- ${e.descripcion}</article> 
+        </div>`
+    }
+}
 
 const SaveLocal = () => {
     localStorage.setItem('Pendiente', JSON.stringify(pendientes));
@@ -42,7 +50,7 @@ const SaveLocal = () => {
 const printHTML = () => {
     pendientesUI.innerHTML = '';
     pendientes = JSON.parse(localStorage.getItem('Pendiente'));
-    console.log(pendientes);
+    // console.log(pendientes);
     if (pendientes === null) {
         pendientes = [];
     } else {
@@ -50,7 +58,8 @@ const printHTML = () => {
             pendientesUI.innerHTML += template(element);
         });
     }
-
+    toDoUI.value = '';
+    toDoDesc.value = '';
 }
 
 const findIndex = (textToDo) => {
@@ -65,9 +74,8 @@ formularioUI.addEventListener('submit', (e) => {
     e.preventDefault();
     if (toDoUI.value !== ''){
         console.log(toDoUI.value);
-        CrearPendiente(toDoUI.value);
+        CrearPendiente(toDoUI.value, toDoDesc.value);
         SaveLocal();
-        toDoUI.value = '';
         printHTML();
     }
         
@@ -77,7 +85,7 @@ document.addEventListener('DOMContentLoaded', printHTML());
 
 pendientesUI.addEventListener('click', (e) => {
     e.preventDefault();
-    let localStorageText = e.composedPath()[1].childNodes[3].innerText;
+    let localStorageText = e.composedPath()[1].childNodes[7].innerText;
     let typeClick = e.target.textContent;
     console.log('LocalStorageText:' + localStorageText);
     let toDoIndex = findIndex(localStorageText);
@@ -96,37 +104,3 @@ pendientesUI.addEventListener('click', (e) => {
     }
 
 });
-
-
-
-// -----------------------------
-
-// const template = (activity, stat) => 
-// `<div class="alert alert-primary" role="alert">
-// <span class="material-icons float-start">
-//     fact_check
-// </span>
-// <b class="m-2">${activity}</b> - ${stat}
-// <span class="material-icons float-end ms-2">delete</span>
-// <span class="material-icons float-end ms-2">done</span>
-// </div>`
-
-// class Activity {
-//     constructor(activity, stat){
-//         this.activity = activity;
-//         this.stat = stat;
-//     }
-
-//     getActivity (){
-//         return template(this.activity, this.stat);
-//     }
-// }
-
-// formularioUI.addEventListener('submit', (e) => {
-//     e.preventDefault();    
-//     let textUI = toDoUI.value;
-//     const status = 'Pendiente';
-//     console.log(textUI, status);
-//     const printActivity = new Activity(textUI, status);
-//     pendientesUI.innerHTML += printActivity.getActivity();
-//     });
