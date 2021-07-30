@@ -16,14 +16,24 @@ const CrearPendiente = (pendiente) => {
 }
 
 const template = (e) => 
-`<div class="alert alert-primary" role="alert">
+`<div class="alert alert-warning flex-wrap" role="alert">
 <span class="material-icons float-start">
     fact_check
 </span>
-<b class="m-2">${e.pendiente}</b> - ${e.estado}
-<i class="material-icons float-end ms-2">delete</i>
-<i class="material-icons float-end ms-2">done</i>
+<b class="m-2 w-50">${e.pendiente}</b>
+<span class="w-25 fst-italic"> - ${e.estado}</span>
+<span class="material-icons float-end ms-1">delete</span>
+<span class="material-icons float-end ms-1">done</span>
+<article class="w-75">Descripcion del pendiente, que debera de incluir una explicacion mas detallada de la actividad</article> 
 </div>`
+// `<div class="alert alert-primary" role="alert">
+// <span class="material-icons float-start">
+//     fact_check
+// </span>
+// <b class="m-2">${e.pendiente}</b> - ${e.estado}
+// <i class="material-icons float-end ms-2">delete</i>
+// <i class="material-icons float-end ms-2">done</i>
+// </div>`
 
 const SaveLocal = () => {
     localStorage.setItem('Pendiente', JSON.stringify(pendientes));
@@ -43,7 +53,14 @@ const printHTML = () => {
 
 }
 
-// Button script
+const findIndex = (textToDo) => {
+    return pendientes.findIndex((e) => {
+        return e.pendiente === textToDo;
+    })
+};
+
+
+// Button script / Actions UI
 formularioUI.addEventListener('submit', (e) => {
     e.preventDefault();
     if (toDoUI.value !== ''){
@@ -54,10 +71,31 @@ formularioUI.addEventListener('submit', (e) => {
         printHTML();
     }
         
-} )
+} );
 
 document.addEventListener('DOMContentLoaded', printHTML());
 
+pendientesUI.addEventListener('click', (e) => {
+    e.preventDefault();
+    let localStorageText = e.composedPath()[1].childNodes[3].innerText;
+    let typeClick = e.target.textContent;
+    console.log('LocalStorageText:' + localStorageText);
+    let toDoIndex = findIndex(localStorageText);
+    if (typeClick === 'delete'){
+        // Accion de eliminar localStorage Item
+        console.log('accion delete');
+        pendientes.splice(toDoIndex, 1);
+        SaveLocal();
+        printHTML();
+    } else if (typeClick === 'done'){
+        console.log('accion done');
+        pendientes[toDoIndex].estado = 'Realizado';
+        SaveLocal();
+        printHTML();
+        // console.log(pendientes[toDoIndex].estado);
+    }
+
+});
 
 
 
