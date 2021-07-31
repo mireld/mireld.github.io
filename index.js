@@ -1,9 +1,12 @@
-console.log('Funcionando');
-
+// console.log('Funcionando');
+// Variables
 const formularioUI = document.querySelector('#formulario');
+const saveBtn = document.querySelector('#btn-save');
+const updateBtn = document.querySelector('#btn-update');
 const toDoUI = document.querySelector('#pendiente');
 const toDoDesc = document.querySelector('#descripcion');
 const pendientesUI = document.querySelector('#listaActividades');
+let toDoIndex= 0;
 let pendientes = [];
 
 
@@ -25,6 +28,7 @@ const template = (e) => {
         </span>
         <span class="material-icons float-end ms-1">delete</span>
         <span class="material-icons float-end ms-1">done</span>
+        <span class="material-icons float-end ms-1">edit</span>
         <b class="m-2 w-50">${e.pendiente}</b>
         <span class="w-25 fst-italic"> - ${e.estado}</span>
         <article class="w-75">- ${e.descripcion}</article> 
@@ -36,6 +40,7 @@ const template = (e) => {
         </span>
         <span class="material-icons float-end ms-1">delete</span>
         <span class="material-icons float-end ms-1">done</span>
+        <span class="material-icons float-end ms-1">edit</span>
         <b class="m-2 w-50">${e.pendiente}</b>
         <span class="w-25 fst-italic"> - ${e.estado}</span>
         <article class="w-75">- ${e.descripcion}</article> 
@@ -70,10 +75,11 @@ const findIndex = (textToDo) => {
 
 
 // Button script / Actions UI
-formularioUI.addEventListener('submit', (e) => {
+
+saveBtn.addEventListener('click', (e) => {
     e.preventDefault();
     if (toDoUI.value !== ''){
-        console.log(toDoUI.value);
+        console.log('save to local: '+toDoUI.value);
         CrearPendiente(toDoUI.value, toDoDesc.value);
         SaveLocal();
         printHTML();
@@ -81,26 +87,52 @@ formularioUI.addEventListener('submit', (e) => {
         
 } );
 
+updateBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    // let toDoIndex = findIndex(localStorageText);
+    if (toDoUI.value !== ''){
+        console.log('Update: ' + toDoUI.value);
+        pendientes[toDoIndex].pendiente = toDoUI.value;
+        pendientes[toDoIndex].descripcion = toDoDesc.value;
+        SaveLocal();
+        printHTML();
+        toDoUI.classList.remove('list-group-item-warning');
+        toDoDesc.classList.remove('list-group-item-warning');
+        saveBtn.classList.remove('visually-hidden');
+        updateBtn.classList.add('visually-hidden');
+
+    }        
+} );
+
 document.addEventListener('DOMContentLoaded', printHTML());
 
 pendientesUI.addEventListener('click', (e) => {
     e.preventDefault();
-    let localStorageText = e.composedPath()[1].childNodes[7].innerText;
+    // console.log(e.composedPath()[1]);
+    let localStorageText = e.composedPath()[1].childNodes[9].innerText;
     let typeClick = e.target.textContent;
     console.log('LocalStorageText:' + localStorageText);
-    let toDoIndex = findIndex(localStorageText);
+    toDoIndex = findIndex(localStorageText);
     if (typeClick === 'delete'){
         // Accion de eliminar localStorage Item
-        console.log('accion delete');
+        // console.log('accion delete');
         pendientes.splice(toDoIndex, 1);
         SaveLocal();
         printHTML();
     } else if (typeClick === 'done'){
-        console.log('accion done');
+        // Accion de cambiar estado localStorage Item
+        // console.log('accion done');
         pendientes[toDoIndex].estado = 'Realizado';
         SaveLocal();
         printHTML();
         // console.log(pendientes[toDoIndex].estado);
+    } else if (typeClick === 'edit') {
+        // Accion para editar el elemento
+        toDoUI.value = pendientes[toDoIndex].pendiente;
+        toDoDesc.value = pendientes[toDoIndex].descripcion;
+        toDoUI.classList.add('list-group-item-warning');
+        toDoDesc.classList.add('list-group-item-warning');
+        saveBtn.classList.add('visually-hidden');
+        updateBtn.classList.remove('visually-hidden');
     }
-
 });

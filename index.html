@@ -14,7 +14,7 @@
     <title>CRUD app</title>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">UCAMP-001</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,8 @@
         <form id="formulario">
             <input type="text" id="pendiente" class="col form-control my-3" placeholder="Accion">
             <input type="text" id="descripcion" class="col form-control my-3" placeholder="Descripcion">
-            <button type="submit" id="btn-save" class="col btn btn-primary">Guardar</button>
+            <button id="btn-save" class="col btn btn-primary">Guardar</button>
+            <button id="btn-update" class="col btn btn-warning visually-hidden">Actualizar</button>
         </form>
     </div>
     <h2 class="container-fluid mt-4">Pendientes:</h2>
